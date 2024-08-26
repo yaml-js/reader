@@ -1,0 +1,16 @@
+{
+  "configurations": [
+    {
+      "name": "Debug Terminal",
+      "request": "launch",
+      "type": "node-terminal",
+      "outFiles": [
+        "${workspaceFolder}/**/*.(m|c|)js",
+        "${workspaceFolder}/**/*.(m|c|)ts",
+        "**/node_modules/@yaml-js/**/*.(m|c|)js",
+        "**/node_modules/@yaml-js/**/*.ts",
+        "!**/node_modules/**",
+      ]
+    },
+  ]
+}

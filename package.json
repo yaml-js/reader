@@ -1,0 +1,73 @@
+{
+  "packageManager": "yarn@4.4.0",
+  "name": "@yaml-js/reader",
+  "description": "This package provides a simple and flexible utility for reading YAML files in both TypeScript and JavaScript projects",
+  "version": "${FROM TAG}",
+  "types": "./lib/yaml-js.reader.d.ts",
+  "main": "./lib/yaml-js.reader.js",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./lib/yaml-js.reader.d.mts",
+        "default": "./lib/yaml-js.reader.mjs"
+      },
+      "require": {
+        "types": "./lib/yaml-js.reader.d.ts",
+        "default": "./lib/yaml-js.reader.js"
+      }
+    },
+    "./client": {
+      "types": "./src/modules.d.ts"
+    }
+  },
+  "files": [
+    "src",
+    "dist",
+    "./LICENSE",
+    "./README.md"
+  ],
+  "keywords": [
+    "yaml",
+    "yml"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yaml-js/reader"
+  },
+  "bugs": {
+    "url": "https://github.com/yaml-js/reader/issues"
+  },
+  "license": "MIT",
+  "homepage": "https://yaml-js.org",
+  "scripts": {
+    "lint": "eslint -c ./config/eslint.cjs 'src/**/*.ts' 'tests/**/*.ts'",
+    "format": "prettier --config ./config/prettier.cjs 'src/**/*.ts' --write",
+    "test": "jest --config ./config/jest.ts --collect-coverage --coverage",
+    "deploy": "npm publish --access=public",
+    "build": "yarn tsup --config ./config/build.ts"
+  },
+  "devDependencies": {
+    "@types/eslint": "^9.6.1",
+    "@types/eslint-config-prettier": "^6.11.3",
+    "@types/jest": "^29.5.12",
+    "@types/node": "^22.5.0",
+    "@types/yaml": "^1.9.7",
+    "@yaml-js/config-eslint": "^0.1.4",
+    "@yaml-js/config-prettier": "^0.1.4",
+    "eslint": "^9.9.1",
+    "eslint-config-prettier": "^9.1.0",
+    "globals": "^15.9.0",
+    "jest": "^29.7.0",
+    "jest-html-reporter": "^3.10.2",
+    "jest-junit": "^16.0.0",
+    "prettier": "^3.3.3",
+    "ts-jest": "^29.2.5",
+    "ts-node": "^10.9.2",
+    "tsup": "^8.2.4",
+    "typescript": "^5.5.4",
+    "typescript-eslint": "^8.2.0"
+  },
+  "dependencies": {
+    "yaml": "^2.5.0"
+  }
+}
