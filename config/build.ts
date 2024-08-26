@@ -11,10 +11,11 @@ export default defineConfig({
   format: ['esm', 'cjs'],
   target: 'node22',
   dts: true,
+  bundle: !debug_build,
   minify: !debug_build,
   sourcemap: true,
   clean: true,
   outDir: 'lib',
   skipNodeModulesBundle: true,
-  platform: 'node'
+  platform: 'node',
 });

@@ -1,0 +1,3 @@
+env: STG
+api:
+  url: http://override-api.my-app.com

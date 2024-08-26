@@ -1,15 +1,15 @@
 import * as fs from 'fs'
 import { parse as parseYaml } from 'yaml'
 
+import { type BufferEncoding, FileNotFoundError } from './types'
 import { Logger, createConsoleLogger } from './logger'
 
 export type YamlContent = Record<string, unknown>
 
-type BufferEncoding = 'ascii' | 'utf8' | 'utf-8' | 'utf16le' | 'utf-16le' | 'ucs2' | 'ucs-2' | 'base64' | 'base64url' | 'latin1' | 'binary' | 'hex'
-
 export interface ReadOptions {
   encoding?: BufferEncoding
   throwIfNotFound?: boolean
+  replaceEnvVariables?: boolean
 }
 
 export interface ReadItem {
@@ -37,24 +37,18 @@ const merge = (target: YamlContent, source: YamlContent): YamlContent => {
 // Pattern to match ${VAR_NAME} or ${VAR_NAME:DEFAULT_VALUE}
 const pattern = /\$\{(?<VAR>[A-Za-z0-9_]+)(?::(?<DEFAULT>[^}]*))?\}/g
 
-const replaceEnvVariables = (content: string): string => {
+const doReplaceEnvVars = (content: string): string => {
   const result = content.replaceAll(pattern, (_, varName, defaultValue) => {
     return process.env[varName] ?? defaultValue ?? `\${${varName}}`
   })
   return result
 }
 
-export class FileNotFoundError extends Error {
-  constructor(path: string) {
-    super(`File not found: ${path}`)
-  }
-}
-
 export class Reader {
   private logger: Logger
 
   constructor(logger?: Logger) {
-    this.logger = logger ?? createConsoleLogger('EnvYaml.Reader', undefined, 'INFO')
+    this.logger = logger ?? createConsoleLogger('YAML-JS/Reader.Schema', undefined, 'INFO')
   }
 
   public async read(items: ReadItem[]): Promise<YamlContent> {
@@ -62,6 +56,7 @@ export class Reader {
     for (const item of items) {
       const encoding = item.options?.encoding || 'utf-8'
       const throwIfNotFound = item.options?.throwIfNotFound || false
+      const replaceEnvVariables = item.options?.replaceEnvVariables ?? true
 
       const exists = await fs.promises
         .access(item.path, fs.constants.F_OK)
@@ -71,7 +66,7 @@ export class Reader {
       if (exists) {
         this.logger.debug(() => `Reading file ${item.path}`)
         const content = await fs.promises.readFile(item.path, encoding)
-        const yamlContent = parseYaml(replaceEnvVariables(content)) as YamlContent
+        const yamlContent = parseYaml(replaceEnvVariables ? doReplaceEnvVars(content) : content) as YamlContent
         result = merge(result, yamlContent)
       } else if (throwIfNotFound) {
         throw new FileNotFoundError(item.path)
@@ -85,12 +80,13 @@ export class Reader {
     for (const item of items) {
       const encoding = item.options?.encoding || 'utf-8'
       const throwIfNotFound = item.options?.throwIfNotFound || false
+      const replaceEnvVariables = item.options?.replaceEnvVariables ?? true
 
       const exists = fs.existsSync(item.path)
       if (exists) {
         this.logger.debug(() => `Reading file ${item.path}`)
         const content = fs.readFileSync(item.path, encoding)
-        const yamlContent = parseYaml(replaceEnvVariables(content)) as YamlContent
+        const yamlContent = parseYaml(replaceEnvVariables ? doReplaceEnvVars(content) : content) as YamlContent
         result = merge(result, yamlContent)
       } else if (throwIfNotFound) {
         throw new FileNotFoundError(item.path)

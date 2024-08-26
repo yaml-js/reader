@@ -1,0 +1,7 @@
+app:
+  name: my-app
+  version: 1.0.0
+  description: My App
+api:
+  url: http://api.my-app.com
+  key: ${API_KEY}
