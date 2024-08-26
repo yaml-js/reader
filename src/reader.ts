@@ -54,7 +54,7 @@ export class Reader {
   public async read(items: ReadItem[]): Promise<YamlContent> {
     let result: YamlContent = {}
     for (const item of items) {
-      const encoding = item.options?.encoding || 'utf-8'
+      const encoding = item.options?.encoding ?? 'utf-8'
       const throwIfNotFound = item.options?.throwIfNotFound || false
       const replaceEnvVariables = item.options?.replaceEnvVariables ?? true
 
@@ -78,7 +78,7 @@ export class Reader {
   public readSync(items: ReadItem[]): YamlContent {
     let result: YamlContent = {}
     for (const item of items) {
-      const encoding = item.options?.encoding || 'utf-8'
+      const encoding = item.options?.encoding ?? 'utf-8'
       const throwIfNotFound = item.options?.throwIfNotFound || false
       const replaceEnvVariables = item.options?.replaceEnvVariables ?? true
 
