@@ -1,10 +1,8 @@
 import * as fs from 'fs'
-import { parse as parseYaml } from 'yaml'
+import { parse } from 'yaml'
 
-import { type BufferEncoding, FileNotFoundError } from './types'
+import { BufferEncoding, FileNotFoundError, YamlContent } from './types'
 import { Logger, createConsoleLogger } from './logger'
-
-export type YamlContent = Record<string, unknown>
 
 export interface ReadOptions {
   encoding?: BufferEncoding
@@ -12,7 +10,7 @@ export interface ReadOptions {
   replaceEnvVariables?: boolean
 }
 
-export interface ReadItem {
+interface Item {
   path: string
   options?: ReadOptions
 }
@@ -45,13 +43,9 @@ const doReplaceEnvVars = (content: string): string => {
 }
 
 export class Reader {
-  private logger: Logger
+  constructor(private logger: Logger = createConsoleLogger('YAML-JS/Reader.Reader', undefined, 'INFO')) {}
 
-  constructor(logger?: Logger) {
-    this.logger = logger ?? createConsoleLogger('YAML-JS/Reader.Schema', undefined, 'INFO')
-  }
-
-  public async read(items: ReadItem[]): Promise<YamlContent> {
+  public async read(items: Item[]): Promise<YamlContent> {
     let result: YamlContent = {}
     for (const item of items) {
       const encoding = item.options?.encoding ?? 'utf-8'
@@ -75,7 +69,7 @@ export class Reader {
     return result
   }
 
-  public readSync(items: ReadItem[]): YamlContent {
+  public readSync(items: Item[]): YamlContent {
     let result: YamlContent = {}
     for (const item of items) {
       const encoding = item.options?.encoding ?? 'utf-8'
@@ -98,7 +92,7 @@ export class Reader {
 
 const defaultReader = new Reader()
 
-export const readMultipleSync = (items: ReadItem[]): YamlContent => {
+export const readMultipleSync = (items: Item[]): YamlContent => {
   return defaultReader.readSync(items)
 }
 
@@ -106,10 +100,14 @@ export const readSync = (path: string, options?: ReadOptions): YamlContent => {
   return defaultReader.readSync([{ path, options }])
 }
 
-export const readMultiple = async (items: ReadItem[]): Promise<YamlContent> => {
+export const readMultiple = async (items: Item[]): Promise<YamlContent> => {
   return defaultReader.read(items)
 }
 
 export const read = async (path: string, options?: ReadOptions): Promise<YamlContent> => {
   return defaultReader.read([{ path, options }])
+}
+
+export const parseYaml = (content: string): Record<string, unknown> => {
+  return parse(content) as Record<string, unknown>
 }
