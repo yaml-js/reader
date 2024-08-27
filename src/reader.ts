@@ -2,13 +2,12 @@ import * as path from 'path'
 import { parse } from 'yaml'
 
 import { YamlContent } from './types'
-import { FileNotFoundError, InvalidYamlContentError } from './errors'
+import { FileNotFoundError, InvalidYamlContentError, UnsupportedMimeTypeError } from './errors'
 import { Logger, createConsoleLogger } from './logger'
 import { SchemaCompiler } from './schemaCompiler'
 import { SchemaReader } from './schemaReader'
 import { TextFileLoader, toAbsolutePath } from './textFileLoader'
 import { MimeType } from './mimeType'
-import { UnsupportedMimeTypeError } from './errors'
 
 export interface ReadOptions {
   throwIfNotFound?: boolean

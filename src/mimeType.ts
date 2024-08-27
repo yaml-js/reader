@@ -1,6 +1,6 @@
 export class MimeType {
-  static JSON = new MimeType('application/json')
-  static YAML = new MimeType('application/yaml')
+  static readonly JSON = new MimeType('application/json')
+  static readonly YAML = new MimeType('application/yaml')
 
   private constructor(public readonly value: string) {}
 

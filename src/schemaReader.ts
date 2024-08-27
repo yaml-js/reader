@@ -1,11 +1,10 @@
 import { Logger, createConsoleLogger } from './logger'
 import { YamlSchemaDefinition } from './types'
-import { InvalidSchemaError, FileNotFoundError } from './errors'
+import { InvalidSchemaError, FileNotFoundError, UnsupportedMimeTypeError } from './errors'
 import { Schema } from './schema'
 import { SchemaCompiler } from './schemaCompiler'
 import { TextFileLoader } from './textFileLoader'
 import { MimeType } from './mimeType'
-import { UnsupportedMimeTypeError } from './errors'
 
 export class SchemaReader {
   constructor(
@@ -33,14 +32,12 @@ export class SchemaReader {
     return parsedSchema
   }
 
-  public async read(uri: string, encoding?: BufferEncoding): Promise<YamlSchemaDefinition> {
-    if (!encoding) encoding = 'utf-8'
-
+  public async read(uri: string): Promise<YamlSchemaDefinition> {
     const exists = await this.loader.exists(uri)
 
     if (exists) {
       this.logger.debug(() => `Reading schema from ${uri}`)
-      const res = await this.loader.load(uri);
+      const res = await this.loader.load(uri)
       return this.parseSchema(uri, res.content, res.mimeType)
     } else {
       this.logger.error(() => `File not found: ${uri}`)
@@ -48,8 +45,8 @@ export class SchemaReader {
     }
   }
 
-  public async readAndCompile(path: string, encoding?: BufferEncoding): Promise<Schema> {
-    const schema = await this.read(path, encoding)
+  public async readAndCompile(uri: string): Promise<Schema> {
+    const schema = await this.read(uri)
     const validationFunction = await this.compiler.compile(schema)
     return Schema.create(schema, validationFunction)
   }
@@ -58,10 +55,10 @@ export class SchemaReader {
 const loader = new TextFileLoader(process.cwd())
 const defaultReader = new SchemaReader(loader, new SchemaCompiler(loader))
 
-export const read = (path: string, encoding?: BufferEncoding): Promise<YamlSchemaDefinition> => {
-  return defaultReader.read(path, encoding)
+export const read = (uri: string): Promise<YamlSchemaDefinition> => {
+  return defaultReader.read(uri)
 }
 
-export const readAndCompile = (path: string, encoding?: BufferEncoding): Promise<Schema> => {
-  return defaultReader.readAndCompile(path, encoding)
+export const readAndCompile = (uri: string): Promise<Schema> => {
+  return defaultReader.readAndCompile(uri)
 }
