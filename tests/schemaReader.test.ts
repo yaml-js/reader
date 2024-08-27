@@ -1,8 +1,13 @@
-import { SchemaReader, readSchema, readSchemaSync } from '../src/yaml-js.reader';
+import { InvalidSchemaError, SchemaReader, readSchema, readSchemaSync } from '../src/yaml-js.reader';
 
 describe('Subject: SchemaReader class', () => {
 
-  it('Scenario 01: Is should read a single json schema successfully', async () => {
+  it ('Scenario 01: It throws reading an invalid schema', async () => {
+    const path = './tests/resources/schema-invalid.yaml';
+    expect(() => readSchemaSync(path)).toThrow(InvalidSchemaError);
+  });
+
+  it('Scenario 02: Is should read a single json schema successfully', async () => {
     const path = './tests/resources/schema.json';
     const expected = {
       $id: "http://example.com/schema.yaml",

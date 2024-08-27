@@ -1,3 +1,7 @@
+interface String {
+  parseYaml() : Record<string, unknown>;
+}
+
 declare module '*.yaml' {
   const data: Record<string, unknown>
   export default data

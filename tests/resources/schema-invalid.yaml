@@ -7,17 +7,7 @@ properties:
     type: string
   app:
     type: object
-    properties:
-      name:
-        type: string
-      version:
-        type: string
-      description:
-        type: string
-    required:
-      - name
-      - version
-      - description
+    properties: name
   api:
     type: object
     properties:
