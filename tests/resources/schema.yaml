@@ -1,4 +1,4 @@
-$id: http://example.com/schema.yaml
+$id: org.yaml-js.schemas.tests.base-yaml
 $schema: http://json-schema.org/draft-07/schema#
 title: Simple json schema defined using yaml
 type: object

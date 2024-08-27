@@ -1,24 +1,30 @@
-import * as fs from 'fs'
-
 import { Logger, createConsoleLogger } from './logger'
-import { BufferEncoding, FileNotFoundError, InvalidSchemaError, YamlSchemaDefinition } from './types'
+import { YamlSchemaDefinition } from './types'
+import { InvalidSchemaError, FileNotFoundError } from './errors'
 import { Schema } from './schema'
-import { SchemaRegistry } from './schemaRegistry'
+import { SchemaCompiler } from './schemaCompiler'
+import { TextFileLoader } from './textFileLoader'
+import { MimeType } from './mimeType'
+import { UnsupportedMimeTypeError } from './errors'
 
 export class SchemaReader {
   constructor(
-    private schemaRegistry: SchemaRegistry = new SchemaRegistry(),
+    private loader: TextFileLoader,
+    private compiler: SchemaCompiler,
     private logger: Logger = createConsoleLogger('YAML-JS/Reader.SchemaReader', undefined, 'INFO')
   ) {}
 
-  private parseSchema(source: string, content: string): YamlSchemaDefinition {
-    const lastDotIndex = source.lastIndexOf('.')
-    let isJson = true
-    if (lastDotIndex > 0) {
-      isJson = source.slice(source.lastIndexOf('.') + 2).toLowerCase() === 'json'
+  private parseSchema(source: string, content: string, mimeType: MimeType): YamlSchemaDefinition {
+    let parsedSchema: YamlSchemaDefinition
+    if (mimeType == MimeType.JSON) {
+      parsedSchema = JSON.parse(content)
+    } else if (mimeType == MimeType.YAML) {
+      parsedSchema = content.parseYaml()
+    } else {
+      throw new UnsupportedMimeTypeError(mimeType.value)
     }
-    const parsedSchema = isJson ? JSON.parse(content) : content.parseYaml();
-    const result = this.schemaRegistry.validate(parsedSchema)
+
+    const result = this.compiler.validate(parsedSchema)
     if (!result.valid) {
       this.logger.error(() => `Invalid schema: ${source}`, result.errors)
       throw new InvalidSchemaError(result.errors.join('\n'))
@@ -27,63 +33,33 @@ export class SchemaReader {
     return parsedSchema
   }
 
-  public async read(path: string, encoding?: BufferEncoding): Promise<YamlSchemaDefinition> {
+  public async read(uri: string, encoding?: BufferEncoding): Promise<YamlSchemaDefinition> {
     if (!encoding) encoding = 'utf-8'
 
-    const exists = await fs.promises
-      .access(path, fs.constants.F_OK)
-      .then(() => true)
-      .catch(() => false)
+    const exists = await this.loader.exists(uri)
 
     if (exists) {
-      this.logger.debug(() => `Reading schema from file ${path}`)
-      const content = await fs.promises.readFile(path, encoding)
-      return this.parseSchema(path, content)
+      this.logger.debug(() => `Reading schema from ${uri}`)
+      const res = await this.loader.load(uri);
+      return this.parseSchema(uri, res.content, res.mimeType)
     } else {
-      this.logger.error(() => `File not found: ${path}`)
-      throw new FileNotFoundError(path)
+      this.logger.error(() => `File not found: ${uri}`)
+      throw new FileNotFoundError(uri)
     }
   }
 
   public async readAndCompile(path: string, encoding?: BufferEncoding): Promise<Schema> {
     const schema = await this.read(path, encoding)
-    const validationFunction = await this.schemaRegistry.compile(schema)
-    return Schema.create(schema, validationFunction)
-  }
-
-  public readSync(path: string, encoding?: BufferEncoding): YamlSchemaDefinition {
-    if (!encoding) encoding = 'utf-8'
-
-    const exists = fs.existsSync(path)
-    if (exists) {
-      this.logger.debug(() => `Reading schema from file ${path}`)
-      const content = fs.readFileSync(path, encoding)
-      return this.parseSchema(path, content)
-    } else {
-      this.logger.error(() => `File not found: ${path}`)
-      throw new FileNotFoundError(path)
-    }
-  }
-
-  public readAndCompileSync(path: string, encoding?: BufferEncoding): Schema {
-    const schema = this.readSync(path, encoding)
-    const validationFunction = this.schemaRegistry.compileSync(schema)
+    const validationFunction = await this.compiler.compile(schema)
     return Schema.create(schema, validationFunction)
   }
 }
 
-const defaultReader = new SchemaReader()
-
-export const readSync = (path: string, encoding?: BufferEncoding): YamlSchemaDefinition => {
-  return defaultReader.readSync(path, encoding)
-}
+const loader = new TextFileLoader(process.cwd())
+const defaultReader = new SchemaReader(loader, new SchemaCompiler(loader))
 
 export const read = (path: string, encoding?: BufferEncoding): Promise<YamlSchemaDefinition> => {
   return defaultReader.read(path, encoding)
-}
-
-export const readAndCompileSync = (path: string, encoding?: BufferEncoding): Schema => {
-  return defaultReader.readAndCompileSync(path, encoding)
 }
 
 export const readAndCompile = (path: string, encoding?: BufferEncoding): Promise<Schema> => {

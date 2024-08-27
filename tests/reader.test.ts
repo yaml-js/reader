@@ -1,14 +1,13 @@
-import { FileNotFoundError, Reader, read, readMultiple, readMultipleSync, readSync } from '../src/yaml-js.reader';
+import { FileNotFoundError, Reader, read, readMultiple } from '../src/yaml-js.reader';
+import { InvalidYamlContentError } from '../src/errors';
 
-describe('Subject: Reader class', () => {
+describe('Subject: Read Yaml', () => {
 
   it('Scenario 01: It throws and exception if file does not exist and falg is set to true', async () => {
     const path = './tests/resources/non-existent.yaml';
 
     const reader = new Reader();
-    await expect(reader.read([{path, options: {throwIfNotFound: true}}])).rejects.toThrow(FileNotFoundError);
-
-    expect(() => readSync(path, {throwIfNotFound: true})).toThrow(FileNotFoundError);
+    await expect(reader.read([path], {throwIfNotFound: true})).rejects.toThrow(FileNotFoundError);
     await expect(() => read(path, {throwIfNotFound: true})).rejects.toThrow(FileNotFoundError);
   });
 
@@ -17,11 +16,8 @@ describe('Subject: Reader class', () => {
 
     const expected = {}
     const reader = new Reader();
-    const result = await reader.read([{path}])
+    const result = await reader.read([path])
     expect(result).toEqual(expected);
-
-    const resultReadSync = readSync(path)
-    expect(resultReadSync).toEqual(expected);
 
     const resultReadAsync = await read(path)
     expect(resultReadAsync).toEqual(expected);
@@ -43,11 +39,8 @@ describe('Subject: Reader class', () => {
     }
 
     const reader = new Reader();
-    const result = await reader.read([{path}])
+    const result = await reader.read([path])
     expect(result).toEqual(expected);
-
-    const resultReadSync = readSync(path)
-    expect(resultReadSync).toEqual(expected);
 
     const resultReadAsync = await read(path)
     expect(resultReadAsync).toEqual(expected);
@@ -70,10 +63,7 @@ describe('Subject: Reader class', () => {
       }
     }
 
-    const resultReadSync = readMultipleSync([{path}, {path: pathOveride}])
-    expect(resultReadSync).toEqual(expected);
-
-    const resultReadAsync = await readMultiple([{path}, {path: pathOveride}])
+    const resultReadAsync = await readMultiple([path, pathOveride])
     expect(resultReadAsync).toEqual(expected);
   });
 
@@ -92,9 +82,6 @@ describe('Subject: Reader class', () => {
         key: "THIS IS THE API KEY"
       }
     }
-
-    const resultReadSync = readSync(path)
-    expect(resultReadSync).toEqual(expected);
 
     const resultReadAsync = await read(path)
     expect(resultReadAsync).toEqual(expected);
@@ -116,10 +103,15 @@ describe('Subject: Reader class', () => {
       }
     }
 
-    const resultReadSync = readSync(path, {replaceEnvVariables: false})
-    expect(resultReadSync).toEqual(expected);
+    expect(await read(path, {replaceEnvVariables: false})).toEqual(expected);
+  });
 
-    const resultReadAsync = await read(path, {replaceEnvVariables: false})
-    expect(resultReadAsync).toEqual(expected);
+
+  it('Scenario 07: If the file links to a schema, the reader validates the content and throws if it is not valid', async () => {
+    const valid = './tests/resources/validation/valid.yml';
+    const invalid = './tests/resources/validation/invalid.yml';
+
+    expect(read(valid, {validate: true})).resolves.toBeDefined();
+    expect(read(invalid, {validate: true})).rejects.toThrow(InvalidYamlContentError);
   });
 });

@@ -1,5 +1,5 @@
 import { Logger, createConsoleLogger } from './logger'
-import { ValidateFunction } from './schemaRegistry'
+import { ValidateFunction } from './schemaCompiler'
 import { ValidationResults, YamlContent, YamlSchemaDefinition } from './types'
 
 export class Schema {

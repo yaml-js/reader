@@ -1,22 +1,28 @@
-import * as fs from 'fs'
+import * as path from 'path'
 import { parse } from 'yaml'
 
-import { BufferEncoding, FileNotFoundError, YamlContent } from './types'
+import { YamlContent } from './types'
+import { FileNotFoundError, InvalidYamlContentError } from './errors'
 import { Logger, createConsoleLogger } from './logger'
+import { SchemaCompiler } from './schemaCompiler'
+import { SchemaReader } from './schemaReader'
+import { TextFileLoader, toAbsolutePath } from './textFileLoader'
+import { MimeType } from './mimeType'
+import { UnsupportedMimeTypeError } from './errors'
 
 export interface ReadOptions {
-  encoding?: BufferEncoding
   throwIfNotFound?: boolean
   replaceEnvVariables?: boolean
-}
-
-interface Item {
-  path: string
-  options?: ReadOptions
+  validate?: boolean
 }
 
 const isObject = (item: unknown): boolean => {
   return item !== null && typeof item === 'object' && !Array.isArray(item)
+}
+
+const getBasePath = (basePath: string, filePath: string): string => {
+  const absolutePath = toAbsolutePath(basePath, filePath)
+  return path.dirname(absolutePath)
 }
 
 const merge = (target: YamlContent, source: YamlContent): YamlContent => {
@@ -43,69 +49,76 @@ const doReplaceEnvVars = (content: string): string => {
 }
 
 export class Reader {
-  constructor(private logger: Logger = createConsoleLogger('YAML-JS/Reader.Reader', undefined, 'INFO')) {}
+  private loader: TextFileLoader
+  private compiler: SchemaCompiler
 
-  public async read(items: Item[]): Promise<YamlContent> {
-    let result: YamlContent = {}
-    for (const item of items) {
-      const encoding = item.options?.encoding ?? 'utf-8'
-      const throwIfNotFound = item.options?.throwIfNotFound || false
-      const replaceEnvVariables = item.options?.replaceEnvVariables ?? true
-
-      const exists = await fs.promises
-        .access(item.path, fs.constants.F_OK)
-        .then(() => true)
-        .catch(() => false)
-
-      if (exists) {
-        this.logger.debug(() => `Reading file ${item.path}`)
-        const content = await fs.promises.readFile(item.path, encoding)
-        const yamlContent = parseYaml(replaceEnvVariables ? doReplaceEnvVars(content) : content) as YamlContent
-        result = merge(result, yamlContent)
-      } else if (throwIfNotFound) {
-        throw new FileNotFoundError(item.path)
-      }
-    }
-    return result
+  constructor(
+    private basePath: string = process.cwd(),
+    private logger: Logger = createConsoleLogger('YAML-JS/Reader.Reader', undefined, 'INFO')
+  ) {
+    this.loader = new TextFileLoader(basePath)
+    this.compiler = new SchemaCompiler(this.loader)
   }
 
-  public readSync(items: Item[]): YamlContent {
-    let result: YamlContent = {}
-    for (const item of items) {
-      const encoding = item.options?.encoding ?? 'utf-8'
-      const throwIfNotFound = item.options?.throwIfNotFound || false
-      const replaceEnvVariables = item.options?.replaceEnvVariables ?? true
-
-      const exists = fs.existsSync(item.path)
-      if (exists) {
-        this.logger.debug(() => `Reading file ${item.path}`)
-        const content = fs.readFileSync(item.path, encoding)
-        const yamlContent = parseYaml(replaceEnvVariables ? doReplaceEnvVars(content) : content) as YamlContent
-        result = merge(result, yamlContent)
-      } else if (throwIfNotFound) {
-        throw new FileNotFoundError(item.path)
+  private async validateYaml(content: YamlContent): Promise<void> {
+    if (content.$schema) {
+      this.logger.debug(() => `Validating content against schema`, { content: content, schema: content.$schema })
+      const schemaReader = new SchemaReader(this.loader, this.compiler)
+      const schema = await schemaReader.readAndCompile(content.$schema)
+      const validationResult = schema.validate(content)
+      if (!validationResult.valid) {
+        throw new InvalidYamlContentError(content.$schema ?? '', validationResult.errors.join('\n'))
       }
     }
+  }
+
+  public async read(files: string[], options?: ReadOptions): Promise<YamlContent> {
+    let result: YamlContent = {}
+    const validate = options?.validate ?? false
+    const throwIfNotFound = options?.throwIfNotFound ?? false
+    const replaceEnvVariables = options?.replaceEnvVariables ?? true
+
+    const filesRootPath = getBasePath(this.basePath, files[0])
+    for (const file of files) {
+      this.loader.basePath = process.cwd()
+      const exists = await this.loader.exists(file)
+      if (exists) {
+        this.logger.debug(() => `Reading file ${file}`)
+
+        const res = await this.loader.load(file)
+        let content = res.content
+        if (replaceEnvVariables) {
+          content = doReplaceEnvVars(content)
+        }
+
+        if (res.mimeType === MimeType.YAML) {
+          const yamlContent = parseYaml(content) as YamlContent
+          result = merge(result, yamlContent)
+        } else {
+          throw new UnsupportedMimeTypeError(res.mimeType.value)
+        }
+      } else if (throwIfNotFound) {
+        throw new FileNotFoundError(file)
+      }
+    }
+
+    this.loader.basePath = filesRootPath
+    if (validate) await this.validateYaml(result)
     return result
   }
 }
 
-const defaultReader = new Reader()
+const defaultReader = new Reader(process.cwd())
 
-export const readMultipleSync = (items: Item[]): YamlContent => {
-  return defaultReader.readSync(items)
+export const readMultiple = async (files: string[], options?: ReadOptions): Promise<YamlContent> => {
+  if (files.length === 0) {
+    return {}
+  }
+  return defaultReader.read(files, options)
 }
 
-export const readSync = (path: string, options?: ReadOptions): YamlContent => {
-  return defaultReader.readSync([{ path, options }])
-}
-
-export const readMultiple = async (items: Item[]): Promise<YamlContent> => {
-  return defaultReader.read(items)
-}
-
-export const read = async (path: string, options?: ReadOptions): Promise<YamlContent> => {
-  return defaultReader.read([{ path, options }])
+export const read = async (filePath: string, options?: ReadOptions): Promise<YamlContent> => {
+  return defaultReader.read([filePath], options)
 }
 
 export const parseYaml = (content: string): Record<string, unknown> => {

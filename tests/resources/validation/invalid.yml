@@ -1,0 +1,4 @@
+$schema: ./schema.yaml
+api:
+  url: http://api.my-app.com
+  key: ${API_KEY}

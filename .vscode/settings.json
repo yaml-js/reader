@@ -1,4 +1,3 @@
 {
-    "jest.jestCommandLine": "jest --config ./config/jest.ts --",
-    "jest.rootPath": ".."
+    "jest.jestCommandLine": "./node_modules/.bin/jest --config ./config/jest.ts --",
 }
