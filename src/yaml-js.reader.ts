@@ -1,4 +1,4 @@
-import "./string.extensions"
+import './string.extensions'
 
 export { type YamlContent, type YamlSchemaDefinition } from './types'
 export { FileNotFoundError, InvalidSchemaError, InvalidYamlContentError, UnsupportedMimeTypeError } from './errors'

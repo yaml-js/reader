@@ -1,4 +1,4 @@
-import "./string.extensions"
+import './string.extensions'
 
 import { Logger, getLogger } from '@yaml-js/core.logging'
 import { YamlSchemaDefinition } from './types'
