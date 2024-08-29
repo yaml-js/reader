@@ -1,3 +1,6 @@
 {
-    "jest.jestCommandLine": "./node_modules/.bin/jest --config ./config/jest.ts --",
+  "jest.jestCommandLine": "./node_modules/.bin/jest --config ./config/jest.ts --",
+  "jest.runMode": {
+    "type": "on-demand"
+  }
 }

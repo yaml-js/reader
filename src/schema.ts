@@ -1,4 +1,4 @@
-import { Logger, createConsoleLogger } from './logger'
+import { Logger, getLogger } from '@yaml-js/core.logging'
 import { ValidateFunction } from './schemaCompiler'
 import { ValidationResults, YamlContent, YamlSchemaDefinition } from './types'
 
@@ -6,7 +6,7 @@ export class Schema {
   private constructor(
     private schema: YamlSchemaDefinition,
     private validateFunction: ValidateFunction,
-    private logger: Logger = createConsoleLogger('YAML-JS/Reader.Schema', undefined, 'INFO')
+    private logger: Logger = getLogger('org.ymal-js.reader.Schema')
   ) {}
 
   public static create(schema: YamlSchemaDefinition, validateFunction: ValidateFunction, logger?: Logger): Schema {

@@ -1,4 +1,6 @@
-import { Logger, createConsoleLogger } from './logger'
+import './string.extensions'
+
+import { Logger, getLogger } from '@yaml-js/core.logging'
 import { YamlSchemaDefinition } from './types'
 import { InvalidSchemaError, FileNotFoundError, UnsupportedMimeTypeError } from './errors'
 import { Schema } from './schema'
@@ -10,7 +12,7 @@ export class SchemaReader {
   constructor(
     private loader: TextFileLoader,
     private compiler: SchemaCompiler,
-    private logger: Logger = createConsoleLogger('YAML-JS/Reader.SchemaReader', undefined, 'INFO')
+    private logger: Logger = getLogger('org.ymal-js.reader.SchemaReader')
   ) {}
 
   private parseSchema(source: string, content: string, mimeType: MimeType): YamlSchemaDefinition {

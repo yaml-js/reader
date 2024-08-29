@@ -1290,7 +1290,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/express@npm:^4":
+"@types/express@npm:^4.17.21":
   version: 4.17.21
   resolution: "@types/express@npm:4.17.21"
   dependencies:
@@ -1367,12 +1367,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^22.5.0":
+"@types/node@npm:*":
   version: 22.5.0
   resolution: "@types/node@npm:22.5.0"
   dependencies:
     undici-types: "npm:~6.19.2"
   checksum: 10c0/45aa75c5e71645fac42dced4eff7f197c3fdfff6e8a9fdacd0eb2e748ff21ee70ffb73982f068a58e8d73b2c088a63613142c125236cdcf3c072ea97eada1559
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^22.5.1":
+  version: 22.5.1
+  resolution: "@types/node@npm:22.5.1"
+  dependencies:
+    undici-types: "npm:~6.19.2"
+  checksum: 10c0/35373176d8a1d4e16004a1ed303e68d39e4c6341024dc056f2577982df98c1a045a6b677f12ed557796f09bbf7d621f428f6874cc37ed28f7b336fa604b5f6a6
   languageName: node
   linkType: hard
 
@@ -1577,23 +1586,41 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@yaml-js/core.extensions@npm:^0.1.2":
+  version: 0.1.2
+  resolution: "@yaml-js/core.extensions@npm:0.1.2"
+  checksum: 10c0/027b69433a78954129e7eaf3bed5d02fe425f56ea0194643435e318123225ec42c27863f78bed4b93473784f75668a44a8e3585c2442e63967196bf9c3c9edef
+  languageName: node
+  linkType: hard
+
+"@yaml-js/core.logging@npm:^0.1.2":
+  version: 0.1.2
+  resolution: "@yaml-js/core.logging@npm:0.1.2"
+  dependencies:
+    "@yaml-js/core.extensions": "npm:^0.1.2"
+  checksum: 10c0/560256ea7287f759eb7c39f5d8c0f5a4e238d5708e31aa39724e8dffd355c92213151f93914c3216763858fb15150ffb5c8cdfa376ba834c4053fbfc7d268fa7
+  languageName: node
+  linkType: hard
+
 "@yaml-js/reader@workspace:.":
   version: 0.0.0-use.local
   resolution: "@yaml-js/reader@workspace:."
   dependencies:
     "@types/eslint": "npm:^9.6.1"
     "@types/eslint-config-prettier": "npm:^6.11.3"
-    "@types/express": "npm:^4"
+    "@types/express": "npm:^4.17.21"
     "@types/jest": "npm:^29.5.12"
-    "@types/node": "npm:^22.5.0"
+    "@types/node": "npm:^22.5.1"
     "@types/yaml": "npm:^1.9.7"
     "@yaml-js/config-eslint": "npm:^0.1.4"
     "@yaml-js/config-prettier": "npm:^0.1.4"
+    "@yaml-js/core.logging": "npm:^0.1.2"
     ajv: "npm:^8.17.1"
     eslint: "npm:^9.9.1"
     eslint-config-prettier: "npm:^9.1.0"
     express: "npm:^4.19.2"
     globals: "npm:^15.9.0"
+    husky: "npm:^9.1.5"
     jest: "npm:^29.7.0"
     jest-html-reporter: "npm:^3.10.2"
     jest-junit: "npm:^16.0.0"
@@ -3320,6 +3347,15 @@ __metadata:
   version: 2.1.0
   resolution: "human-signals@npm:2.1.0"
   checksum: 10c0/695edb3edfcfe9c8b52a76926cd31b36978782062c0ed9b1192b36bebc75c4c87c82e178dfcb0ed0fc27ca59d434198aac0bd0be18f5781ded775604db22304a
+  languageName: node
+  linkType: hard
+
+"husky@npm:^9.1.5":
+  version: 9.1.5
+  resolution: "husky@npm:9.1.5"
+  bin:
+    husky: bin.js
+  checksum: 10c0/f42efb95a026303eb880898760f802d88409780dd72f17781d2dfc302177d4f80b641cf1f1694f53f6d97c536c7397684133d8c8fe4a4426f7460186a7d1c6b8
   languageName: node
   linkType: hard
 
