@@ -1,9 +1,9 @@
 import * as path from 'path'
 import { parse } from 'yaml'
+import { Logger, getLogger } from '@yaml-js/core.logging'
 
 import { YamlContent } from './types'
 import { FileNotFoundError, InvalidYamlContentError, UnsupportedMimeTypeError } from './errors'
-import { Logger, createConsoleLogger } from './logger'
 import { SchemaCompiler } from './schemaCompiler'
 import { SchemaReader } from './schemaReader'
 import { TextFileLoader, toAbsolutePath } from './textFileLoader'
@@ -53,7 +53,7 @@ export class Reader {
 
   constructor(
     private basePath: string = process.cwd(),
-    private logger: Logger = createConsoleLogger('YAML-JS/Reader.Reader', undefined, 'INFO')
+    private logger: Logger = getLogger('org.ymal-js.reader.Reader')
   ) {
     this.loader = new TextFileLoader(basePath)
     this.compiler = new SchemaCompiler(this.loader)

@@ -1,14 +1,10 @@
-import { Logger, createConsoleLogger } from './logger'
+import { Logger, getLogger } from '@yaml-js/core.logging'
 import { ValidationResults } from './types'
 import { ReadOptions, read } from './reader'
 import { readAndCompile } from './schemaReader'
 
 export class Validator {
-  private logger: Logger
-
-  constructor(logger?: Logger) {
-    this.logger = logger ?? createConsoleLogger('YAML-JS/Reader.Validator', undefined, 'INFO')
-  }
+  constructor(private logger: Logger = getLogger('org.ymal-js.reader.Validator')) {}
 
   public async validate(schema: string, file: string, options?: ReadOptions): Promise<ValidationResults> {
     const yaml = await read(file, options)

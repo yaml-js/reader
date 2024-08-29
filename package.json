@@ -37,18 +37,20 @@
   "license": "MIT",
   "homepage": "https://yaml-js.org",
   "scripts": {
-    "lint": "eslint -c ./config/eslint.cjs 'src/**/*.ts' 'tests/**/*.ts'",
-    "format": "prettier --config ./config/prettier.cjs 'src/**/*.ts' --write",
+    "lint": "eslint -c ./shared/configs/eslint.cjs 'src/**/*.ts' 'tests/**/*.ts'",
+    "format": "prettier --config ./shared/configs/prettier.cjs 'src/**/*.ts' --write",
     "test": "jest --config ./config/jest.ts --collect-coverage --coverage",
     "deploy": "npm publish --access=public",
-    "build": "yarn tsup --config ./config/build.ts"
+    "build": "yarn tsup --config ./config/build.ts",
+    "pre-commit": "yarn lint && yarn format && yarn test",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@types/eslint": "^9.6.1",
     "@types/eslint-config-prettier": "^6.11.3",
-    "@types/express": "^4",
+    "@types/express": "^4.17.21",
     "@types/jest": "^29.5.12",
-    "@types/node": "^22.5.0",
+    "@types/node": "^22.5.1",
     "@types/yaml": "^1.9.7",
     "@yaml-js/config-eslint": "^0.1.4",
     "@yaml-js/config-prettier": "^0.1.4",
@@ -56,6 +58,7 @@
     "eslint-config-prettier": "^9.1.0",
     "express": "^4.19.2",
     "globals": "^15.9.0",
+    "husky": "^9.1.5",
     "jest": "^29.7.0",
     "jest-html-reporter": "^3.10.2",
     "jest-junit": "^16.0.0",
@@ -67,6 +70,7 @@
     "typescript-eslint": "^8.3.0"
   },
   "dependencies": {
+    "@yaml-js/core.logging": "^0.1.2",
     "ajv": "^8.17.1",
     "yaml": "^2.5.0"
   }
