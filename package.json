@@ -40,7 +40,7 @@
     "lint": "eslint -c ./shared/configs/eslint.cjs 'src/**/*.ts' 'tests/**/*.ts'",
     "format": "prettier --config ./shared/configs/prettier.cjs 'src/**/*.ts' --write",
     "test": "jest --config ./config/jest.ts --collect-coverage --coverage",
-    "deploy": "npm publish --access=public",
+    "deploy": "yarn npm publish --access=public",
     "build": "yarn tsup --config ./config/build.ts",
     "pre-commit": "yarn lint && yarn format && yarn test",
     "prepare": "husky"
