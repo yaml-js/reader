@@ -1,6 +1,12 @@
 import './string.extensions'
 
-export { type YamlContent, type YamlSchemaDefinition } from './types'
+export {
+  type YamlContent,
+  type YamlSchemaDefinition,
+  type YamlSchemaPrimitiveItemDefinition,
+  type YamlSchemaArrayItemDefinition,
+  type YamlSchemaObjectItemDefinition
+} from './types'
 export { FileNotFoundError, InvalidSchemaError, InvalidYamlContentError, UnsupportedMimeTypeError } from './errors'
 export { Schema } from './schema'
 export { read, readMultiple, Reader, type ReadOptions } from './reader'
