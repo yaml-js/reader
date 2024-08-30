@@ -10,13 +10,14 @@ interface YamlSchemaItemDefinition {
   $ref?: string
   $comment?: string
   title?: string
+  type: 'string' | 'number' | 'integer' | 'boolean' | 'object' | 'array'
   description?: string
   default?: unknown
   examples?: unknown[]
 }
 
 export interface YamlSchemaPrimitiveItemDefinition extends YamlSchemaItemDefinition {
-  type: 'string' | 'number' | 'integer' | 'boolean' | 'null'
+  type: 'string' | 'number' | 'integer' | 'boolean'
   format?: string
   contentMediaType?: string
   contentEncoding?: string
