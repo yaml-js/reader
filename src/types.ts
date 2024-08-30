@@ -4,7 +4,7 @@ export type YamlContent = {
   [x: string]: unknown
 }
 
-interface YamlSchemaItem {
+interface YamlSchemaItemDefinition {
   $id?: string
   $schema?: string
   $ref?: string
@@ -15,7 +15,7 @@ interface YamlSchemaItem {
   examples?: unknown[]
 }
 
-interface YamlSchemaPrimitiveItem extends YamlSchemaItem {
+export interface YamlSchemaPrimitiveItemDefinition extends YamlSchemaItemDefinition {
   type: 'string' | 'number' | 'integer' | 'boolean' | 'null'
   format?: string
   contentMediaType?: string
@@ -32,29 +32,29 @@ interface YamlSchemaPrimitiveItem extends YamlSchemaItem {
   pattern?: string
 }
 
-interface YamlSchemaArrayItem extends YamlSchemaItem {
+export interface YamlSchemaArrayItemDefinition extends YamlSchemaItemDefinition {
   type: 'array'
-  items?: YamlSchemaItem | YamlSchemaItem[]
-  additionalItems?: YamlSchemaItem | boolean
+  items?: YamlSchemaItemDefinition | YamlSchemaItemDefinition[]
+  additionalItems?: YamlSchemaItemDefinition | boolean
   maxItems?: number
   minItems?: number
   uniqueItems?: boolean
-  contains?: YamlSchemaItem
+  contains?: YamlSchemaItemDefinition
 }
 
-interface YamlSchemaObjectItem extends YamlSchemaItem {
+export interface YamlSchemaObjectItemDefinition extends YamlSchemaItemDefinition {
   type: 'object'
-  properties?: { [key: string]: YamlSchemaItem }
-  patternProperties?: { [key: string]: YamlSchemaItem }
-  additionalProperties?: YamlSchemaItem | boolean
+  properties?: { [key: string]: YamlSchemaItemDefinition }
+  patternProperties?: { [key: string]: YamlSchemaItemDefinition }
+  additionalProperties?: YamlSchemaItemDefinition | boolean
   maxProperties?: number
   minProperties?: number
   required?: string[]
-  dependencies?: { [key: string]: YamlSchemaItem | string[] }
-  propertyNames?: YamlSchemaItem
+  dependencies?: { [key: string]: YamlSchemaItemDefinition | string[] }
+  propertyNames?: YamlSchemaItemDefinition
 }
 
-export type YamlSchemaDefinition = YamlSchemaPrimitiveItem | YamlSchemaArrayItem | YamlSchemaObjectItem
+export type YamlSchemaDefinition = YamlSchemaPrimitiveItemDefinition | YamlSchemaArrayItemDefinition | YamlSchemaObjectItemDefinition
 
 export interface ValidationResults {
   valid: boolean
