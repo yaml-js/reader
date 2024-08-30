@@ -35,13 +35,13 @@ yarn add -D @yaml-js/reader
 Here is a basic example of how to use the **Reader** package in your project::
 
 ```javascript
-import { readFile, validateSchema } from '@yaml-js/reader';
+import { read, validate } from '@yaml-js/reader';
 
 // Read a YAML file
-const data = await readFile('./config.yaml');
+const data = await read('./config.yaml');
 
 // Validate the YAML data against a schema
-const isValid = validateSchema(data, schema);
+const isValid = validate(data, schema);
 
 if (isValid) {
     console.log('YAML file is valid and ready to use');
