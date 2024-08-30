@@ -4,19 +4,18 @@ export type YamlContent = {
   [x: string]: unknown
 }
 
-interface YamlSchemaItemDefinition {
+interface YamlSchemaItemBaseDefinition {
   $id?: string
   $schema?: string
   $ref?: string
   $comment?: string
   title?: string
-  type: 'string' | 'number' | 'integer' | 'boolean' | 'object' | 'array'
   description?: string
   default?: unknown
   examples?: unknown[]
 }
 
-export interface YamlSchemaPrimitiveItemDefinition extends YamlSchemaItemDefinition {
+export interface YamlSchemaPrimitiveItemDefinition extends YamlSchemaItemBaseDefinition {
   type: 'string' | 'number' | 'integer' | 'boolean'
   format?: string
   contentMediaType?: string
@@ -33,7 +32,7 @@ export interface YamlSchemaPrimitiveItemDefinition extends YamlSchemaItemDefinit
   pattern?: string
 }
 
-export interface YamlSchemaArrayItemDefinition extends YamlSchemaItemDefinition {
+export interface YamlSchemaArrayItemDefinition extends YamlSchemaItemBaseDefinition {
   type: 'array'
   items?: YamlSchemaItemDefinition | YamlSchemaItemDefinition[]
   additionalItems?: YamlSchemaItemDefinition | boolean
@@ -43,7 +42,7 @@ export interface YamlSchemaArrayItemDefinition extends YamlSchemaItemDefinition 
   contains?: YamlSchemaItemDefinition
 }
 
-export interface YamlSchemaObjectItemDefinition extends YamlSchemaItemDefinition {
+export interface YamlSchemaObjectItemDefinition extends YamlSchemaItemBaseDefinition {
   type: 'object'
   properties?: { [key: string]: YamlSchemaItemDefinition }
   patternProperties?: { [key: string]: YamlSchemaItemDefinition }
@@ -55,6 +54,7 @@ export interface YamlSchemaObjectItemDefinition extends YamlSchemaItemDefinition
   propertyNames?: YamlSchemaItemDefinition
 }
 
+export type YamlSchemaItemDefinition = YamlSchemaPrimitiveItemDefinition | YamlSchemaArrayItemDefinition | YamlSchemaObjectItemDefinition
 export type YamlSchemaDefinition = YamlSchemaPrimitiveItemDefinition | YamlSchemaArrayItemDefinition | YamlSchemaObjectItemDefinition
 
 export interface ValidationResults {
