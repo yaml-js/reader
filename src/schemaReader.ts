@@ -18,9 +18,10 @@ export class SchemaReader {
   private parseSchema(source: string, content: string, mimeType: MimeType): YamlSchemaDefinition {
     let parsedSchema: YamlSchemaDefinition
     if (mimeType == MimeType.JSON) {
-      parsedSchema = JSON.parse(content)
+      parsedSchema = JSON.parse(content) as YamlSchemaDefinition
     } else if (mimeType == MimeType.YAML) {
-      parsedSchema = content.parseYaml()
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      parsedSchema = content.parseYaml() as Record<string, any> as YamlSchemaDefinition
     } else {
       throw new UnsupportedMimeTypeError(mimeType.value)
     }
