@@ -27,7 +27,8 @@ export class SchemaCompiler {
     if (file.mimeType == MimeType.JSON) {
       return JSON.parse(file.content)
     } else if (file.mimeType == MimeType.YAML) {
-      return file.content.parseYaml()
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return file.content.parseYaml() as Record<string, any> as YamlSchemaDefinition
     } else {
       throw new UnsupportedMimeTypeError(file.mimeType.value)
     }
