@@ -1586,19 +1586,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@yaml-js/core.extensions@npm:^0.1.2":
-  version: 0.1.2
-  resolution: "@yaml-js/core.extensions@npm:0.1.2"
-  checksum: 10c0/027b69433a78954129e7eaf3bed5d02fe425f56ea0194643435e318123225ec42c27863f78bed4b93473784f75668a44a8e3585c2442e63967196bf9c3c9edef
+"@yaml-js/core.extensions@npm:^0.5.0":
+  version: 0.5.0
+  resolution: "@yaml-js/core.extensions@npm:0.5.0"
+  checksum: 10c0/b5f569e68a1f7b876da19ed3b314281d27eeb723fd8876c1bf9c202452fc0ae82af47c86aec59987cfb10418ea54a3445ba8ed7cf8679fbbfc6919c718a31677
   languageName: node
   linkType: hard
 
-"@yaml-js/core.logging@npm:^0.1.2":
-  version: 0.1.2
-  resolution: "@yaml-js/core.logging@npm:0.1.2"
+"@yaml-js/core.logging@npm:^0.5.0":
+  version: 0.5.0
+  resolution: "@yaml-js/core.logging@npm:0.5.0"
   dependencies:
-    "@yaml-js/core.extensions": "npm:^0.1.2"
-  checksum: 10c0/560256ea7287f759eb7c39f5d8c0f5a4e238d5708e31aa39724e8dffd355c92213151f93914c3216763858fb15150ffb5c8cdfa376ba834c4053fbfc7d268fa7
+    "@yaml-js/core.extensions": "npm:^0.5.0"
+  checksum: 10c0/1b30166da1bc4e2e89066e898723832e044b929ddd49072f60e91cf8ec56232c8da620c3c9e82d983257f6b887d15593cde770c282c4adeaad733bc3c8a8d1b5
   languageName: node
   linkType: hard
 
@@ -1614,7 +1614,7 @@ __metadata:
     "@types/yaml": "npm:^1.9.7"
     "@yaml-js/config-eslint": "npm:^0.1.4"
     "@yaml-js/config-prettier": "npm:^0.1.4"
-    "@yaml-js/core.logging": "npm:^0.1.2"
+    "@yaml-js/core.logging": "npm:^0.5.0"
     ajv: "npm:^8.17.1"
     eslint: "npm:^9.9.1"
     eslint-config-prettier: "npm:^9.1.0"
