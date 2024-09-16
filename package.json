@@ -70,7 +70,7 @@
     "typescript-eslint": "^8.3.0"
   },
   "dependencies": {
-    "@yaml-js/core.logging": "^0.8.0",
+    "@yaml-js/core.logging": "^0.10.0",
     "ajv": "^8.17.1",
     "yaml": "^2.5.0"
   }
